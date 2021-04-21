@@ -3,6 +3,8 @@
 #include <string.h>
 #include "../imagelib/image.h"
 
+#include "max_tree.h"
+
 
 int main(int argc, char** argv)
 {
@@ -11,12 +13,12 @@ int main(int argc, char** argv)
         printf("Modo de uso: %s <input.png> <output.png> <command> [args]\n", argv[0]);
         return 1;
     }
-
     // Cargamos la imagen original desde el archivo
     Image* image = img_png_read_from_file(argv[1]);
 
     /* ------------- POR IMPLEMENTAR -------------- */
     /* Aqui debes crear el MaxTree de la imagen.    */
+
 
     // Creamos una nueva imagen de igual tamaño, para el output
     Image* new_img = calloc(1, sizeof(Image));
