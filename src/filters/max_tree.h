@@ -5,13 +5,19 @@
 #include <math.h>
 
 
+#include "pixel.h"
+
+
 int height; //Largo imagen
 int width; //Ancho imagen
 int pixel_count;
 int* STATUS; //Estatus de cada pixel de la imagen
 int counter;
-
 bool* checked;
+
+int* out;
+
+/*
 
 struct pixel;
 typedef struct pixel Pixel;
@@ -31,6 +37,8 @@ Pixel* Pixel__init(int idx, int color)
     pixel->color = color;
     return pixel;
 }
+*/
+
 
 struct max_tree_node;
 typedef struct max_tree_node MaxTree_Node;
@@ -44,22 +52,21 @@ struct max_tree_node
 
     Pixel* head_pixel;
     Pixel* tail_pixel;
+    int number_of_pixels;
 
     Pixel* t_head_pixel;
     Pixel* t_tail_pixel;
     int t_number_of_pixels;
+    bool diff_colors;
 
-    int pixel_number;
-    int t_pixel_number;
     int grey_level;
 };
 
 int* int_to_coord(int i);
 int coord_to_int(int x,int y);
 bool valid(int i,int j);
-int search_valid_pixel( MaxTree_Node* node, int grey_level);
 int* valid_pixel(int idx, MaxTree_Node* parent, int* ready);
-int search_valid_pixel_child(int* pixels, int grey_level, int* ready);
+int search_valid_pixel_child(int* ready, MaxTree_Node* node);
 void reset_checked();
 void add_pixel(MaxTree_Node* node, Pixel* pixel);
 void add_t_pixel(MaxTree_Node* node, Pixel* pixel);
@@ -67,10 +74,16 @@ void add_node(MaxTree_Node* node, MaxTree_Node* child_node);
 int count_node_t_pixels(MaxTree_Node* node);
 bool same_color(MaxTree_Node* node);
 void print_t_pixels(MaxTree_Node* node);
-int grey_jump(MaxTree_Node* node);
+int min_grey(MaxTree_Node* node);
 
 MaxTree_Node* MaxTree_Node__init();
-static void MaxTree_Node__flood(int x, int y, int* pixels, int grey_level, MaxTree_Node* node);
-static void MaxTree_Node__child_flood(int x, int y, int* pixels, int grey_level, MaxTree_Node* node, int* ready, MaxTree_Node* parent);
-MaxTree_Node* MaxTree_Node__create(int* pixels, MaxTree_Node* node, int grey_level);
+int* MaxTree_Node__filter(MaxTree_Node* node, int* revisados);
+void MaxTree_Node__child_flood(int x, int y, int* pixels, int grey_level, MaxTree_Node* node, int count);
+MaxTree_Node* MaxTree_Node__create(int* pixels, MaxTree_Node* node, int* revisados);
+
+void print_maxtree(MaxTree_Node* root, int depth);
+void print_maxtree_root(MaxTree_Node* root);
+
+void return_array_2(MaxTree_Node* node, int* pixels);
+void return_array(MaxTree_Node* root, int* pixels);
 

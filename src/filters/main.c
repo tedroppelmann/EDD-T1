@@ -3,7 +3,9 @@
 #include <string.h>
 #include "../imagelib/image.h"
 
+
 #include "max_tree.h"
+
 
 
 int main(int argc, char** argv)
@@ -18,6 +20,34 @@ int main(int argc, char** argv)
 
     /* ------------- POR IMPLEMENTAR -------------- */
     /* Aqui debes crear el MaxTree de la imagen.    */
+    
+    /*
+    pixel_count = 9;
+    int P[9] = {0,0,0,0,0,0,0,0,0};
+    height = 3;
+    width = 3;
+    */
+
+    pixel_count = image->pixel_count;
+    height = image->height;
+    width = image->width;
+
+    STATUS = calloc(pixel_count, sizeof(int));
+    checked = calloc(pixel_count, sizeof(bool));
+    int* revisados = calloc(pixel_count, sizeof(int));
+
+    MaxTree_Node* node = MaxTree_Node__init();
+    for (int i = 0; i < pixel_count; i++)
+    {
+        Pixel* pixel = Pixel__init(i, image->pixels[i]);
+        add_t_pixel(node, pixel);
+    }
+    node->grey_level = min_grey(node);
+    MaxTree_Node* root = MaxTree_Node__create(image->pixels, node, revisados);
+
+    free(checked);
+    free(STATUS);
+    free(revisados);
 
 
     // Creamos una nueva imagen de igual tamaño, para el output
@@ -26,7 +56,7 @@ int main(int argc, char** argv)
         .height = image->height,
         .width = image->width,
         .pixel_count = image->pixel_count,
-        .pixels = calloc(image->pixel_count, sizeof(int))
+        .pixels = calloc(pixel_count, sizeof(int))
     };
 
     // Filtramos el arbol y lo guardamos en la imagen, segun el filtro que corresponda
@@ -38,6 +68,7 @@ int main(int argc, char** argv)
         /* ------------- POR IMPLEMENTAR -------------- */
         /* Aqui debes implementar el filtro delta y     */
         /* guardar la imagen filtrada en new_img.       */
+        return_array(root, new_img->pixels);
 
     }
     else if (! strcmp("area", argv[3]))
@@ -51,7 +82,6 @@ int main(int argc, char** argv)
         /* guardar la imagen filtrada en new_img.       */
         
     }
-
     // Exportamos la nueva imagen
     printf("Guardando imagen en %s\n", argv[2]);
     img_png_write_to_file(new_img, argv[2]);

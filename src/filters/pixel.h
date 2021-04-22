@@ -15,5 +15,3 @@ struct pixel
 };
 
 Pixel* Pixel__init(int idx, int color);
-
-
