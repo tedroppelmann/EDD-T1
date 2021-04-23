@@ -319,9 +319,7 @@ MaxTree_Node* MaxTree_Node__create(int* pixels, MaxTree_Node* node, int* revisad
         
             MaxTree_Node__child_flood(x, y, pixels, node->grey_level, child_node, count);
             count += child_node->t_number_of_pixels;
-            /*
-            printf("COUNTER_2: %i\n", count);
-            */
+            
             free(coord);                                                                      //liberamos memoria de coordenada
 
             child_node->grey_level = min_grey(child_node);
@@ -335,7 +333,7 @@ MaxTree_Node* MaxTree_Node__create(int* pixels, MaxTree_Node* node, int* revisad
     return node;
 }
 
-void print_maxtree(MaxTree_Node* root, int depth)
+void print_maxtree_2(MaxTree_Node* root, int depth)
 {
     MaxTree_Node* current = root->head_node;
     char spaces[4*depth + 1];
@@ -359,12 +357,12 @@ void print_maxtree(MaxTree_Node* root, int depth)
             actual = actual->next;
         }
         printf("\n");
-        print_maxtree(current, depth + 1);
+        print_maxtree_2(current, depth + 1);
         current = current->next_node;
     }
 }
 
-void print_maxtree_root(MaxTree_Node* root)
+void print_maxtree(MaxTree_Node* root)
 {
     printf("(%i)",root->grey_level);
     Pixel* current = root->head_pixel;
@@ -378,7 +376,7 @@ void print_maxtree_root(MaxTree_Node* root)
         current = current->next;
     }
     printf("\n");
-    print_maxtree(root, 1);
+    print_maxtree_2(root, 1);
 }
 
 void return_array_2(MaxTree_Node* node, int* pixels)
@@ -414,9 +412,6 @@ void change_color(MaxTree_Node* node, int new_color)
     while (current)
     {
         current->color = new_color;
-        /*
-        add_filter_pixel(filtrados, current);
-        */
         current = current->next;
     }
     node->grey_level = new_color;
@@ -434,15 +429,7 @@ void area_filter(MaxTree_Node* root, int G, int A)
         }
         else if (current->parent && current->grey_level != 0)
         {
-            /*
-            printf("CAMBIA: %i\n", current->t_head_pixel->idx);
-            printf("TIENE: %i\n", current->grey_level);
-            printf("CAMBIA A: %i\n", current->parent->grey_level);
-            */
             change_color(current, current->parent->grey_level);
-            /*
-            printf("AHORA: %i-%i\n", current->t_head_pixel->idx, current->t_head_pixel->color);
-            */
         }
         area_filter(current, G, A);
         current = current->next_node;
@@ -453,7 +440,7 @@ void area_filter_initial(MaxTree_Node* root, int G, int A)
 {
     if (root->grey_level > G && root->t_number_of_pixels > A)
     {
-        
+        // Cumple todas las condiciones
     }
     else if (root->grey_level != 0)
     {
@@ -461,6 +448,35 @@ void area_filter_initial(MaxTree_Node* root, int G, int A)
     }
     area_filter(root, G, A);
 }
+
+void delta_filter(MaxTree_Node* root, float D)
+{   
+    MaxTree_Node* current = root->head_node;
+    while (current)
+    {
+        float numerador = (current->parent->t_number_of_pixels - current->t_number_of_pixels);
+        float denominador = (current->parent->t_number_of_pixels);
+        float cond = numerador/denominador;
+        if (cond < D || current->grey_level == current->parent->grey_level)
+        {
+            // Cumple todas las condiciones
+        }
+        else if (current->parent && cond >= D && current->grey_level != 0)
+        {
+            /*
+            printf("ENTRA\n");
+            printf("Color antiguo: %i\n", current->grey_level);
+            */
+            change_color(current, current->parent->grey_level);
+            /*
+            printf("Color nuevo: %i\n", current->grey_level);
+            */
+        }
+        delta_filter(current, D);
+        current = current->next_node;
+    }
+}
+
 
 /*
 int main()

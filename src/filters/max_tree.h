@@ -10,7 +10,7 @@
 
 int height; //Largo imagen
 int width; //Ancho imagen
-int pixel_count;
+int pixel_count; //Cantidad de pixeles de la imagen
 int* STATUS; //Estatus de cada pixel de la imagen
 bool* checked;
 
@@ -78,8 +78,8 @@ int* MaxTree_Node__filter(MaxTree_Node* node, int* revisados);
 void MaxTree_Node__child_flood(int x, int y, int* pixels, int grey_level, MaxTree_Node* node, int count);
 MaxTree_Node* MaxTree_Node__create(int* pixels, MaxTree_Node* node, int* revisados);
 
-void print_maxtree(MaxTree_Node* root, int depth);
-void print_maxtree_root(MaxTree_Node* root);
+void print_maxtree_2(MaxTree_Node* root, int depth);
+void print_maxtree(MaxTree_Node* root);
 
 void return_array_2(MaxTree_Node* node, int* pixels);
 void return_array(MaxTree_Node* root, int* pixels);
@@ -87,5 +87,7 @@ void return_array(MaxTree_Node* root, int* pixels);
 void change_color(MaxTree_Node* node, int new_color);
 void area_filter(MaxTree_Node* root, int G, int A);
 void area_filter_initial(MaxTree_Node* root, int G, int A);
+
+void delta_filter(MaxTree_Node* root, float D);
 
 
