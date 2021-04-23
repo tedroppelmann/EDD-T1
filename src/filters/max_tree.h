@@ -12,13 +12,10 @@ int height; //Largo imagen
 int width; //Ancho imagen
 int pixel_count;
 int* STATUS; //Estatus de cada pixel de la imagen
-int counter;
 bool* checked;
 
-int* out;
 
 /*
-
 struct pixel;
 typedef struct pixel Pixel;
 
@@ -86,4 +83,9 @@ void print_maxtree_root(MaxTree_Node* root);
 
 void return_array_2(MaxTree_Node* node, int* pixels);
 void return_array(MaxTree_Node* root, int* pixels);
+
+void change_color(MaxTree_Node* node, int new_color);
+void area_filter(MaxTree_Node* root, int G, int A);
+void area_filter_initial(MaxTree_Node* root, int G, int A);
+
 

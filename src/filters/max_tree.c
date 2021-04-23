@@ -211,6 +211,7 @@ MaxTree_Node* MaxTree_Node__init()
     return node;
 }
 
+/* Guarda solo los pixeles del mismo gris que el nodo */
 int* MaxTree_Node__filter(MaxTree_Node* node, int* revisados)
 {
     Pixel* current = node->t_head_pixel;
@@ -268,8 +269,7 @@ void MaxTree_Node__child_flood(int x, int y, int* pixels, int grey_level, MaxTre
 /* Función recursiva que crea el Maxtree. Retorna la raiz.*/
 MaxTree_Node* MaxTree_Node__create(int* pixels, MaxTree_Node* node, int* revisados)
 {
-    int grey_level = node->grey_level;
-    reset_checked();
+    reset_checked();                                                                            //Resetea las revisiones (FUNCION LENTA)
     /*
     printf("\nNIVEL GRIS: %i", grey_level);
     printf("-%i", node->grey_level);
@@ -278,57 +278,26 @@ MaxTree_Node* MaxTree_Node__create(int* pixels, MaxTree_Node* node, int* revisad
     /*
     printf("\nPixel válido para empezar: %i\n", idx);
     */
-    revisados = MaxTree_Node__filter(node, revisados); //Separa solo los pixeles del mismo gris de este nodo y los guarda y actualiza revisados
-    
-    /*
-    counter = 0;
-    int* ready = calloc(pixel_count, sizeof(int));
-    for (int i = 0; i < pixel_count; i++) // Sacamos los pixeles que ya están ocupados o son de otra rama
-    {
-        if (STATUS[i] != 0)
-        {
-            ready[i] = 1;
-        }
-        valid_pixel(i, node, ready);
-        if (ready[i] == 1)
-        {
-            counter += 1;
-        }
-    }
-    */
-   /*
-    printf("\nREVISADOS: ");
-    for (int i = 0; i < pixel_count; i++)
-    {
-        printf("%i-", revisados[i]);
-    }
-    */
-    /*
-    printf("\nREADY: ");
-    for (int i = 0; i < pixel_count; i++)
-    {
-        printf("%i-", ready[i]);
-    }
-    */
+    revisados = MaxTree_Node__filter(node, revisados);                                           //Separa solo los pixeles del mismo gris de este nodo y los guarda y actualiza revisados
     /*
     print_t_pixels(node); //Printea los t_pixeles del nodo
     */
 
-    if (node->diff_colors == true)                                                            // Busco hijos solo si es que existen diferentes grises dentro del nodo
+    if (node->diff_colors == true)                                                               // Busco hijos solo si es que existen diferentes grises dentro del nodo
     {
         /*
         printf("\n########## NECESITA HIJOS ########\n");
         printf("Pixeles que están ocupados: %i\n",counter);
         */
         int count = 0;
-        while (count < (node->t_number_of_pixels) - (node->number_of_pixels))                       //Buscamos todos distintos vecindarios que se generan
+        while (count < (node->t_number_of_pixels) - (node->number_of_pixels))                    //Buscamos todos distintos vecindarios que se generan
         {
             /*
             printf("NODO problema: %i\n", node->head_pixel->idx);
             printf("COUNTER: %i\n", count);
             printf("DIF: %i\n", (node->t_number_of_pixels) - (node->number_of_pixels));
             */
-            idx = search_valid_pixel_child(revisados, node);                                      //Buscamos un pixel válido para iniciar dentro del vecindario
+            idx = search_valid_pixel_child(revisados, node);                                     //Buscamos un pixel válido para iniciar dentro del vecindario
             if (idx == -1)
             {
                 printf("\nERROR\n");
@@ -340,7 +309,6 @@ MaxTree_Node* MaxTree_Node__create(int* pixels, MaxTree_Node* node, int* revisad
             /*
             printf("\nIDX válido para empezar hijos: %i", idx);
             */
-            
             int* coord = int_to_coord(idx);                                                   // Transformamos a coordenadas
             int x = coord[0];
             int y = coord[1];
@@ -349,7 +317,7 @@ MaxTree_Node* MaxTree_Node__create(int* pixels, MaxTree_Node* node, int* revisad
             child_node->parent = node;                                                        // Guarda el nodo padre en el nodo hijo
             add_node(node, child_node);                                                       // Guarda el nodo hijo en el nodo padre
         
-            MaxTree_Node__child_flood(x, y, pixels, grey_level, child_node, count);
+            MaxTree_Node__child_flood(x, y, pixels, node->grey_level, child_node, count);
             count += child_node->t_number_of_pixels;
             /*
             printf("COUNTER_2: %i\n", count);
@@ -364,36 +332,7 @@ MaxTree_Node* MaxTree_Node__create(int* pixels, MaxTree_Node* node, int* revisad
             */
         }
     }
-    
-    /*
-    free(ready); //Liberamos ready
-    counter = 0; //Reseteamos el counter
-    */
-    /*
-    printf("\nNODO PADRE:");
-    Pixel* current = node->head_pixel;
-    while (current)
-    {
-        printf("%i,", current->idx);
-        current = current->next;
-    }
-    
-    printf("\n#############################\n");
-    printf("#############################");
-    */
-    /*
-    MaxTree_Node* actual;
-    if (node->head_node)
-    {
-        actual = node->head_node;
-        while (actual)
-        {
-            MaxTree_Node__create(pixels, actual, revisados);
-            actual = actual->next_node;
-        }
-    }*/
     return node;
-
 }
 
 void print_maxtree(MaxTree_Node* root, int depth)
@@ -409,13 +348,14 @@ void print_maxtree(MaxTree_Node* root, int depth)
     {
         Pixel* actual = current->head_pixel;
         printf("%s", spaces);
+        printf("(%i)",current->grey_level);
         while (actual)
         {   
             if (actual->next)
             {
-                printf("%i-", actual->idx);
+                printf("%i(%i)-", actual->idx,actual->color);
             }
-            else printf("%i", actual->idx);
+            else printf("%i(%i)", actual->idx,actual->color);
             actual = actual->next;
         }
         printf("\n");
@@ -426,7 +366,7 @@ void print_maxtree(MaxTree_Node* root, int depth)
 
 void print_maxtree_root(MaxTree_Node* root)
 {
-    printf("\n\n");
+    printf("(%i)",root->grey_level);
     Pixel* current = root->head_pixel;
     while (current)
     {
@@ -468,13 +408,72 @@ void return_array(MaxTree_Node* root, int* pixels)
     return_array_2(root, pixels);
 }
 
+void change_color(MaxTree_Node* node, int new_color)
+{
+    Pixel* current = node->head_pixel;
+    while (current)
+    {
+        current->color = new_color;
+        /*
+        add_filter_pixel(filtrados, current);
+        */
+        current = current->next;
+    }
+    node->grey_level = new_color;
+    return;
+}
+
+void area_filter(MaxTree_Node* root, int G, int A)
+{   
+    MaxTree_Node* current = root->head_node;
+    while (current)
+    {
+        if (current->grey_level > G && current->t_number_of_pixels > A)
+        {
+            // Cumple todas las condiciones
+        }
+        else if (current->parent && current->grey_level != 0)
+        {
+            /*
+            printf("CAMBIA: %i\n", current->t_head_pixel->idx);
+            printf("TIENE: %i\n", current->grey_level);
+            printf("CAMBIA A: %i\n", current->parent->grey_level);
+            */
+            change_color(current, current->parent->grey_level);
+            /*
+            printf("AHORA: %i-%i\n", current->t_head_pixel->idx, current->t_head_pixel->color);
+            */
+        }
+        area_filter(current, G, A);
+        current = current->next_node;
+    }
+}
+
+void area_filter_initial(MaxTree_Node* root, int G, int A)
+{
+    if (root->grey_level > G && root->t_number_of_pixels > A)
+    {
+        
+    }
+    else if (root->grey_level != 0)
+    {
+        change_color(root, 0);
+    }
+    area_filter(root, G, A);
+}
+
 /*
 int main()
 {
-    pixel_count = 16;
-    int P[16] = {3,0,0,0,2,3,0,0,0,1,0,0,4,0,2,1};
-    height = 4;
-    width = 4;
+    pixel_count = 25;
+    int P[25] = 
+    {3,0,0,0,2,
+    3,0,0,0,1,
+    0,0,4,0,2,
+    1,2,3,1,2,
+    2,1,3,0,1};
+    height = 5;
+    width = 5;
 
     STATUS = calloc(pixel_count, sizeof(int));
     checked = calloc(pixel_count, sizeof(bool));            //Ayuda a ver los pixeles ya revisados
@@ -500,9 +499,15 @@ int main()
         printf("%i-",final_pixels[i]);
     }
 
+    printf("\n");
+
+    int* pixels = calloc(pixel_count, sizeof(int));
+    return_array(root, pixels);
+    area_filter_2(root, 1, 1, pixels);
+    
+
     free(final_pixels);
     free(checked);
     free(STATUS);
 }
 */
-

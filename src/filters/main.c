@@ -80,6 +80,17 @@ int main(int argc, char** argv)
         /* ------------- POR IMPLEMENTAR -------------- */
         /* Aqui debes implementar el filtro de area y   */
         /* guardar la imagen filtrada en new_img.       */
+        area_filter_initial(root, threshold, min_area);
+        return_array(root, new_img->pixels);
+        /*
+        Pixel* actual = filtrados->head_filter_pixel;
+        while (actual)
+        {
+            new_img->pixels[actual->idx] = actual->color;
+            actual = actual->next;
+        }
+        */
+        
         
     }
     // Exportamos la nueva imagen

@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <math.h>
 
+
 struct pixel;
 typedef struct pixel Pixel;
 
