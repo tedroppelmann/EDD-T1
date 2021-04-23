@@ -282,7 +282,7 @@ void MaxTree_Node__child_flood(int x, int y, int* pixels, int grey_level, MaxTre
 /* Función recursiva que crea el Maxtree. Retorna la raiz.*/
 MaxTree_Node* MaxTree_Node__create(int* pixels, MaxTree_Node* node, int* revisados)
 {
-    reset_checked(node);                                                                      //Resetea las revisiones (FUNCION LENTA)
+    reset_checked(node);                                                                      //Resetea las revisiones
     /*
     printf("\nNIVEL GRIS: %i", grey_level);
     printf("-%i", node->grey_level);
@@ -291,11 +291,10 @@ MaxTree_Node* MaxTree_Node__create(int* pixels, MaxTree_Node* node, int* revisad
     /*
     printf("\nPixel válido para empezar: %i\n", idx);
     */
-    revisados = MaxTree_Node__filter(node, revisados);                                        //Separa solo los pixeles del mismo gris de este nodo y los guarda y actualiza revisados
+    revisados = MaxTree_Node__filter(node, revisados);                                        //Separa solo los pixeles del mismo gris del vecindario, los guarda y actualiza revisados
     /*
     print_t_pixels(node); //Printea los t_pixeles del nodo
     */
-
     if (node->diff_colors == true)                                                            // Busco hijos solo si es que existen diferentes grises dentro del nodo
     {
         /*
