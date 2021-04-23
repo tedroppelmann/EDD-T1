@@ -47,15 +47,17 @@ struct max_tree_node
     MaxTree_Node* tail_node;
     MaxTree_Node* next_node;
 
+    // Pixeles del nodo
     Pixel* head_pixel;
     Pixel* tail_pixel;
     int number_of_pixels;
 
+    // Pixeles del vecindario
     Pixel* t_head_pixel;
     Pixel* t_tail_pixel;
     int t_number_of_pixels;
-    bool diff_colors;
 
+    bool diff_colors;
     int grey_level;
 };
 
@@ -64,7 +66,7 @@ int coord_to_int(int x,int y);
 bool valid(int i,int j);
 int* valid_pixel(int idx, MaxTree_Node* parent, int* ready);
 int search_valid_pixel_child(int* ready, MaxTree_Node* node);
-void reset_checked();
+void reset_checked(MaxTree_Node* node);
 void add_pixel(MaxTree_Node* node, Pixel* pixel);
 void add_t_pixel(MaxTree_Node* node, Pixel* pixel);
 void add_node(MaxTree_Node* node, MaxTree_Node* child_node);

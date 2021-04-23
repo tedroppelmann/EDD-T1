@@ -52,6 +52,7 @@ int coord_to_int(int x,int y)
     }
     return i;
 }
+
 /*LINK de ayuda para esta función: https://hackernoon.com/flood-fill-algorithm-with-recursive-function-sex3uvz */
 bool valid(int i,int j)
 {
@@ -99,11 +100,23 @@ int search_valid_pixel_child(int* ready, MaxTree_Node* parent)
 }
 
 /* Resetea el arreglo checked completo */
+/*
 void reset_checked()
 {
     for (int i = 0; i < pixel_count; i++)
     {
         checked[i] = 0;
+    }
+}
+*/
+
+void reset_checked(MaxTree_Node* node)
+{
+    Pixel* current = node->t_head_pixel;
+    while (current)
+    {
+        checked[current->idx] = 0;
+        current = current->next;
     }
 }
 
@@ -181,7 +194,7 @@ void print_t_pixels(MaxTree_Node* node)
     printf("GRIS DEL NODO: %i\n", node->grey_level);
 }
 
-/* Retorna el valor mínimo de grris que tiene el nodo */
+/* Retorna el valor mínimo de gris que tiene el nodo */
 int min_grey(MaxTree_Node* node)
 {
     Pixel* current = node->t_head_pixel;
@@ -269,7 +282,7 @@ void MaxTree_Node__child_flood(int x, int y, int* pixels, int grey_level, MaxTre
 /* Función recursiva que crea el Maxtree. Retorna la raiz.*/
 MaxTree_Node* MaxTree_Node__create(int* pixels, MaxTree_Node* node, int* revisados)
 {
-    reset_checked();                                                                            //Resetea las revisiones (FUNCION LENTA)
+    reset_checked(node);                                                                      //Resetea las revisiones (FUNCION LENTA)
     /*
     printf("\nNIVEL GRIS: %i", grey_level);
     printf("-%i", node->grey_level);
@@ -278,26 +291,26 @@ MaxTree_Node* MaxTree_Node__create(int* pixels, MaxTree_Node* node, int* revisad
     /*
     printf("\nPixel válido para empezar: %i\n", idx);
     */
-    revisados = MaxTree_Node__filter(node, revisados);                                           //Separa solo los pixeles del mismo gris de este nodo y los guarda y actualiza revisados
+    revisados = MaxTree_Node__filter(node, revisados);                                        //Separa solo los pixeles del mismo gris de este nodo y los guarda y actualiza revisados
     /*
     print_t_pixels(node); //Printea los t_pixeles del nodo
     */
 
-    if (node->diff_colors == true)                                                               // Busco hijos solo si es que existen diferentes grises dentro del nodo
+    if (node->diff_colors == true)                                                            // Busco hijos solo si es que existen diferentes grises dentro del nodo
     {
         /*
         printf("\n########## NECESITA HIJOS ########\n");
         printf("Pixeles que están ocupados: %i\n",counter);
         */
         int count = 0;
-        while (count < (node->t_number_of_pixels) - (node->number_of_pixels))                    //Buscamos todos distintos vecindarios que se generan
+        while (count < (node->t_number_of_pixels) - (node->number_of_pixels))                 //Buscamos todos distintos vecindarios que se generan
         {
             /*
             printf("NODO problema: %i\n", node->head_pixel->idx);
             printf("COUNTER: %i\n", count);
             printf("DIF: %i\n", (node->t_number_of_pixels) - (node->number_of_pixels));
             */
-            idx = search_valid_pixel_child(revisados, node);                                     //Buscamos un pixel válido para iniciar dentro del vecindario
+            idx = search_valid_pixel_child(revisados, node);                                  //Buscamos un pixel válido para iniciar dentro del vecindario
             if (idx == -1)
             {
                 printf("\nERROR\n");
@@ -325,9 +338,6 @@ MaxTree_Node* MaxTree_Node__create(int* pixels, MaxTree_Node* node, int* revisad
             child_node->grey_level = min_grey(child_node);
 
             MaxTree_Node__create(pixels, child_node, revisados);
-            /*
-            print_t_pixels(child_node);
-            */
         }
     }
     return node;
