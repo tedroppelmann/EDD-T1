@@ -25,7 +25,6 @@ Filtrar nodos con area mayor a 100 pixeles y grisáceo mayor a 50:
 ```./filters tests/medium/mona_lisa.png out.png area 100 50```
 ```./filters tests/medium/moon.png out.png area 100 50```
 
-```./filters tests/angel.png out.png area 100 50```
 
 Filtrar nodos con delta menor a 0.25:
 ```./filters tests/img1 out.png delta 0.25```

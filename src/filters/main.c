@@ -36,19 +36,20 @@ int main(int argc, char** argv)
     checked = calloc(pixel_count, sizeof(bool));
     int* revisados = calloc(pixel_count, sizeof(int));
 
+    // Inicializo la raíz
     MaxTree_Node* node = MaxTree_Node__init();
     for (int i = 0; i < pixel_count; i++)
     {
         Pixel* pixel = Pixel__init(i, image->pixels[i]);
         add_t_pixel(node, pixel);
     }
-    node->grey_level = min_grey(node);
+
+    //Creo el árbol
     MaxTree_Node* root = MaxTree_Node__create(image->pixels, node, revisados);
 
     free(checked);
     free(STATUS);
     free(revisados);
-
 
     // Creamos una nueva imagen de igual tamaño, para el output
     Image* new_img = calloc(1, sizeof(Image));

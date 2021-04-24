@@ -64,32 +64,13 @@ bool valid(int i,int j)
     }
 }
 
-/*  */
-int* valid_pixel(int idx, MaxTree_Node* parent, int* ready)
-{
-    if (parent->t_head_pixel)
-    {
-        Pixel* current = parent->t_head_pixel;
-        while (current)
-        {
-            if (current->idx == idx)
-            {
-                return ready;
-            }
-            current = current->next;
-        }
-    }
-    ready[idx] = 1;
-    return ready;
-}
-
 /* Busca un pixel valido en el vecindario para empezar sabiendo que no puedo usar los pixeles con ready[] = 1 */
-int search_valid_pixel_child(int* ready, MaxTree_Node* parent)
+int search_valid_pixel_child(int* revisados, MaxTree_Node* parent)
 {
     Pixel* current = parent->t_head_pixel;
     while (current)
     {
-        if (ready[current->idx] != 1)
+        if (revisados[current->idx] != 1)
         {
             return current->idx;
         }
@@ -98,17 +79,6 @@ int search_valid_pixel_child(int* ready, MaxTree_Node* parent)
     printf("################## ERROR AL BUSCAR PIXEL VALIDO  EN HIJOS ##########################");
     return -1;
 }
-
-/* Resetea el arreglo checked completo */
-/*
-void reset_checked()
-{
-    for (int i = 0; i < pixel_count; i++)
-    {
-        checked[i] = 0;
-    }
-}
-*/
 
 void reset_checked(MaxTree_Node* node)
 {
@@ -137,6 +107,11 @@ void add_pixel(MaxTree_Node* node, Pixel* pixel)
 /* Agrega el pixel al nodo a una lista que contiene todos los pixeles del vecindario */
 void add_t_pixel(MaxTree_Node* node, Pixel* pixel)
 {
+    if (pixel->color < node->grey_level)
+    {
+        node->grey_level = pixel->color;
+    }
+    
     if (node->t_head_pixel)
     {
         if (node->t_tail_pixel)
@@ -194,25 +169,6 @@ void print_t_pixels(MaxTree_Node* node)
     printf("GRIS DEL NODO: %i\n", node->grey_level);
 }
 
-/* Retorna el valor mínimo de gris que tiene el nodo */
-int min_grey(MaxTree_Node* node)
-{
-    Pixel* current = node->t_head_pixel;
-    int actual_color = current->color;
-    while (current)
-    {
-        if (current->next)
-        {
-            if (actual_color > current->next->color)
-            {
-                actual_color = current->next->color;
-            }
-        }
-        current = current->next;
-    }
-    return actual_color;
-}
-
 /* Inicializa un nodo */
 MaxTree_Node* MaxTree_Node__init()
 {
@@ -221,6 +177,7 @@ MaxTree_Node* MaxTree_Node__init()
     node->t_head_pixel = NULL;
     node->t_tail_pixel = NULL;
     node->diff_colors = false;
+    node->grey_level = BIGVAL;
     return node;
 }
 
@@ -236,6 +193,7 @@ int* MaxTree_Node__filter(MaxTree_Node* node, int* revisados)
             add_pixel(node, pixel);
             STATUS[current->idx] = 1;
             revisados[current->idx] = 1;
+            
         }
         current = current->next;
     }
@@ -244,7 +202,7 @@ int* MaxTree_Node__filter(MaxTree_Node* node, int* revisados)
 
 /* Analiza recursivamente todos los pixeles de la imagen para determinar los validos para guardar en la lista tentaiva de pixeles del nodo (vecindario) */
 /* Idea sacada de: https://hackernoon.com/flood-fill-algorithm-with-recursive-function-sex3uvz */
-void MaxTree_Node__child_flood(int x, int y, int* pixels, int grey_level, MaxTree_Node* node, int count)
+void MaxTree_Node__child_flood(int x, int y, int* pixels, int grey_level, MaxTree_Node* node)
 {
     int idx = coord_to_int(x, y); //Transforma la coordenada a un índice
     if (STATUS[idx] != 0)
@@ -267,14 +225,14 @@ void MaxTree_Node__child_flood(int x, int y, int* pixels, int grey_level, MaxTre
     {
         Pixel* pixel = Pixel__init(idx, pixels[idx]);
     
-        add_t_pixel(node, pixel); // agrego al vecindario
+        add_t_pixel(node, pixel); // Agrego al vecindario
         
         checked[idx] = true;
         
-        MaxTree_Node__child_flood(x, y - 1, pixels, grey_level, node, count);
-        MaxTree_Node__child_flood(x, y + 1, pixels, grey_level, node, count);
-        MaxTree_Node__child_flood(x - 1, y, pixels, grey_level, node, count);
-        MaxTree_Node__child_flood(x + 1, y, pixels, grey_level, node, count);
+        MaxTree_Node__child_flood(x, y - 1, pixels, grey_level, node);
+        MaxTree_Node__child_flood(x, y + 1, pixels, grey_level, node);
+        MaxTree_Node__child_flood(x - 1, y, pixels, grey_level, node);
+        MaxTree_Node__child_flood(x + 1, y, pixels, grey_level, node);
     }
     return;
 }
@@ -282,34 +240,29 @@ void MaxTree_Node__child_flood(int x, int y, int* pixels, int grey_level, MaxTre
 /* Función recursiva que crea el Maxtree. Retorna la raiz.*/
 MaxTree_Node* MaxTree_Node__create(int* pixels, MaxTree_Node* node, int* revisados)
 {
-    reset_checked(node);                                                                      //Resetea las revisiones
+    //Resetea las revisiones
+    reset_checked(node);                                                                      
     /*
     printf("\nNIVEL GRIS: %i", grey_level);
     printf("-%i", node->grey_level);
-    */
-    int idx = node->t_head_pixel->idx;
-    /*
     printf("\nPixel válido para empezar: %i\n", idx);
     */
-    revisados = MaxTree_Node__filter(node, revisados);                                        //Separa solo los pixeles del mismo gris del vecindario, los guarda y actualiza revisados
-    /*
-    print_t_pixels(node); //Printea los t_pixeles del nodo
-    */
-    if (node->diff_colors == true)                                                            // Busco hijos solo si es que existen diferentes grises dentro del nodo
+    //Separa solo los pixeles del mismo gris del vecindario, los guarda y actualiza revisados
+    revisados = MaxTree_Node__filter(node, revisados);  
+
+    // Busco hijos solo si es que existen diferentes grises dentro del nodo
+    if (node->diff_colors == true)                                                            
     {
         /*
         printf("\n########## NECESITA HIJOS ########\n");
         printf("Pixeles que están ocupados: %i\n",counter);
         */
+        //Buscamos todos distintos vecindarios que se generan
         int count = 0;
-        while (count < (node->t_number_of_pixels) - (node->number_of_pixels))                 //Buscamos todos distintos vecindarios que se generan
+        while (count < (node->t_number_of_pixels) - (node->number_of_pixels))                 
         {
-            /*
-            printf("NODO problema: %i\n", node->head_pixel->idx);
-            printf("COUNTER: %i\n", count);
-            printf("DIF: %i\n", (node->t_number_of_pixels) - (node->number_of_pixels));
-            */
-            idx = search_valid_pixel_child(revisados, node);                                  //Buscamos un pixel válido para iniciar dentro del vecindario
+            //Buscamos un pixel válido para iniciar dentro del vecindario
+            int idx = search_valid_pixel_child(revisados, node);                                  
             if (idx == -1)
             {
                 printf("\nERROR\n");
@@ -321,7 +274,9 @@ MaxTree_Node* MaxTree_Node__create(int* pixels, MaxTree_Node* node, int* revisad
             /*
             printf("\nIDX válido para empezar hijos: %i", idx);
             */
-            int* coord = int_to_coord(idx);                                                   // Transformamos a coordenadas
+
+            // Transformamos índice a coordenadas
+            int* coord = int_to_coord(idx);                                                   
             int x = coord[0];
             int y = coord[1];
             
@@ -329,12 +284,10 @@ MaxTree_Node* MaxTree_Node__create(int* pixels, MaxTree_Node* node, int* revisad
             child_node->parent = node;                                                        // Guarda el nodo padre en el nodo hijo
             add_node(node, child_node);                                                       // Guarda el nodo hijo en el nodo padre
         
-            MaxTree_Node__child_flood(x, y, pixels, node->grey_level, child_node, count);
+            MaxTree_Node__child_flood(x, y, pixels, node->grey_level, child_node);
             count += child_node->t_number_of_pixels;
             
             free(coord);                                                                      //liberamos memoria de coordenada
-
-            child_node->grey_level = min_grey(child_node);
 
             MaxTree_Node__create(pixels, child_node, revisados);
         }
@@ -472,14 +425,7 @@ void delta_filter(MaxTree_Node* root, float D)
         }
         else if (current->parent && cond >= D && current->grey_level != 0)
         {
-            /*
-            printf("ENTRA\n");
-            printf("Color antiguo: %i\n", current->grey_level);
-            */
             change_color(current, current->parent->grey_level);
-            /*
-            printf("Color nuevo: %i\n", current->grey_level);
-            */
         }
         delta_filter(current, D);
         current = current->next_node;
