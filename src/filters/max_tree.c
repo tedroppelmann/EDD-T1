@@ -205,15 +205,15 @@ int* MaxTree_Node__filter(MaxTree_Node* node, int* revisados)
 void MaxTree_Node__child_flood(int x, int y, int* pixels, int grey_level, MaxTree_Node* node)
 {
     int idx = coord_to_int(x, y); //Transforma la coordenada a un índice
+    if (valid(x, y) == false) // Esta fuera de los margenes de la imagen
+    {
+        return;
+    }
     if (STATUS[idx] != 0)
     {
         return;
     }
     if (checked[idx] == true) // Ya fue revisado
-    {
-        return;
-    }
-    if (valid(x, y) == false) // Esta fuera de los margenes de la imagen
     {
         return;
     }
@@ -431,7 +431,6 @@ void delta_filter(MaxTree_Node* root, float D)
         current = current->next_node;
     }
 }
-
 
 /*
 int main()
