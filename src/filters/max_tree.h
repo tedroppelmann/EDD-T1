@@ -5,8 +5,10 @@
 #include <math.h>
 
 #include "pixel.h"
+#include "queue.h"
 
 #define BIGVAL 300
+
 
 int height; //Largo imagen
 int width; //Ancho imagen
@@ -52,7 +54,7 @@ void print_t_pixels(MaxTree_Node* node);
 
 MaxTree_Node* MaxTree_Node__init();
 int* MaxTree_Node__filter(MaxTree_Node* node, int* revisados);
-void MaxTree_Node__child_flood(int x, int y, int* pixels, int grey_level, MaxTree_Node* node);
+void MaxTree_Node__child_flood(int x, int y, int* pixels, int grey_level, MaxTree_Node* node, MaxTree_Node* parent);
 MaxTree_Node* MaxTree_Node__create(int* pixels, MaxTree_Node* node, int* revisados);
 
 void print_maxtree_2(MaxTree_Node* root, int depth);

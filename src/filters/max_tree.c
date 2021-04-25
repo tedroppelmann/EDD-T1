@@ -42,15 +42,14 @@ int* int_to_coord(int i)
 /* Transforma una coordenada en un índice */
 int coord_to_int(int x,int y)
 {
-    int i = 0;
     if (x < width)
     {
         if (y < height)
         {
-            i = width * y + x;
+            return width * y + x;
         }
     }
-    return i;
+    return 0;
 }
 
 /*LINK de ayuda para esta función: https://hackernoon.com/flood-fill-algorithm-with-recursive-function-sex3uvz */
@@ -200,8 +199,10 @@ int* MaxTree_Node__filter(MaxTree_Node* node, int* revisados)
     return revisados;
 }
 
+
 /* Analiza recursivamente todos los pixeles de la imagen para determinar los validos para guardar en la lista tentaiva de pixeles del nodo (vecindario) */
 /* Idea sacada de: https://hackernoon.com/flood-fill-algorithm-with-recursive-function-sex3uvz */
+/*
 void MaxTree_Node__child_flood(int x, int y, int* pixels, int grey_level, MaxTree_Node* node)
 {
     int idx = coord_to_int(x, y); //Transforma la coordenada a un índice
@@ -236,6 +237,38 @@ void MaxTree_Node__child_flood(int x, int y, int* pixels, int grey_level, MaxTre
     }
     return;
 }
+*/
+
+/* Cambio de la función anterior, ya que la anterior hacia stackoverflow al hacer un flood fill recursivo. Ahora se ocupa una fila FIFO */
+/* Idea sacada de: https://stackoverflow.com/questions/30608448/flood-fill-recursive-stack-overflow */
+void MaxTree_Node__child_flood(int i, int j, int* pixels, int grey_level, MaxTree_Node* node, MaxTree_Node* parent)
+{
+    struct Queue* queue = createQueue(pixel_count); // (NADA EFICIENTE)
+    enqueue(queue, coord_to_int(i, j));
+
+    while (!isEmpty(queue))
+    {
+        int idx = front(queue);
+        int *coord = int_to_coord(idx); 
+        int x = coord[0];
+        int y = coord[1];
+        free(coord);
+
+        dequeue(queue);
+
+        if (valid(x, y) && STATUS[idx] == 0 && checked[idx] == false && pixels[idx] >= grey_level)
+        {
+            Pixel* pixel = Pixel__init(idx, pixels[idx]);
+            add_t_pixel(node, pixel);          
+            checked[idx] = true;
+
+            enqueue(queue, coord_to_int(x, y + 1));
+            enqueue(queue, coord_to_int(x, y - 1));
+            enqueue(queue, coord_to_int(x + 1, y));
+            enqueue(queue, coord_to_int(x - 1, y));
+        }
+    }
+}
 
 /* Función recursiva que crea el Maxtree. Retorna la raiz.*/
 MaxTree_Node* MaxTree_Node__create(int* pixels, MaxTree_Node* node, int* revisados)
@@ -268,26 +301,20 @@ MaxTree_Node* MaxTree_Node__create(int* pixels, MaxTree_Node* node, int* revisad
                 printf("\nERROR\n");
                 break;
             }
-            /*
-            printf("Pixel válido: %i\n", idx);
-            */
-            /*
-            printf("\nIDX válido para empezar hijos: %i", idx);
-            */
 
             // Transformamos índice a coordenadas
-            int* coord = int_to_coord(idx);                                                   
+            int *coord = int_to_coord(idx); 
             int x = coord[0];
             int y = coord[1];
+            free(coord);   
             
             MaxTree_Node* child_node = MaxTree_Node__init();                                  // Creo el nodo hijo
             child_node->parent = node;                                                        // Guarda el nodo padre en el nodo hijo
             add_node(node, child_node);                                                       // Guarda el nodo hijo en el nodo padre
         
-            MaxTree_Node__child_flood(x, y, pixels, node->grey_level, child_node);
+            MaxTree_Node__child_flood(x, y, pixels, node->grey_level, child_node, node);
+
             count += child_node->t_number_of_pixels;
-            
-            free(coord);                                                                      //liberamos memoria de coordenada
 
             MaxTree_Node__create(pixels, child_node, revisados);
         }
