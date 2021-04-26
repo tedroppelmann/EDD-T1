@@ -55,7 +55,7 @@ int coord_to_int(int x,int y)
 /*Función sacada de: https://hackernoon.com/flood-fill-algorithm-with-recursive-function-sex3uvz */
 bool valid(int i,int j)
 {
-    if(i<0 || i>width || j<0 || j>height)
+    if(i<0 || i>=width || j<0 || j>=height)
         return false;
     else
     {

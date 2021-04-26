@@ -49,7 +49,7 @@ Filtrar nodos con delta menor a 0.25:
 
 ```./filters tests/hard/moon.png out.png delta 0.008``` FUNCIONA
 ```./filters tests/hard/plate.png out.png delta 0.005``` FUNCIONA
-```./filters tests/hard/campus.png out.png delta 0.25```
+```./filters tests/hard/campus.png out.png delta 0.01``` FUNCIONA
 
 ```./filters campus.png out.png delta 0.25```
 
