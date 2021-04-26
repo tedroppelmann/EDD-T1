@@ -1,3 +1,5 @@
+// La estructura completa de la queue fue sacada de: https://www.geeksforgeeks.org/queue-set-1introduction-and-array-implementation/ 
+
 #include "queue.h"
 
 // function to create a queue
