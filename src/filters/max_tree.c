@@ -478,6 +478,12 @@ void delta_filter(MaxTree_Node* root, float D)
     }
 }
 
+void delta_filter_initial(MaxTree_Node* root, float D)
+{   
+    change_color(root, 0);
+    delta_filter(root, D);
+}
+
 /*
 int main()
 {

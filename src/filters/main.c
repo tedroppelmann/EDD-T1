@@ -69,7 +69,7 @@ int main(int argc, char** argv)
         /* ------------- POR IMPLEMENTAR -------------- */
         /* Aqui debes implementar el filtro delta y     */
         /* guardar la imagen filtrada en new_img.       */
-        delta_filter(root, max_delta);
+        delta_filter_initial(root, max_delta);
         return_array(root, new_img->pixels);
 
     }

@@ -54,7 +54,7 @@ void print_t_pixels(MaxTree_Node* node);
 
 MaxTree_Node* MaxTree_Node__init();
 int* MaxTree_Node__filter(MaxTree_Node* node, int* revisados);
-
+void MaxTree_Node__child_flood(int i, int j, int* pixels, int grey_level, MaxTree_Node* node, MaxTree_Node* parent);
 MaxTree_Node* MaxTree_Node__create(int* pixels, MaxTree_Node* node, int* revisados);
 
 void print_maxtree_2(MaxTree_Node* root, int depth);
@@ -68,3 +68,4 @@ void area_filter(MaxTree_Node* root, int G, int A);
 void area_filter_initial(MaxTree_Node* root, int G, int A);
 
 void delta_filter(MaxTree_Node* root, float D);
+void delta_filter_initial(MaxTree_Node* root, float D);

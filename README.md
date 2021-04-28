@@ -40,7 +40,7 @@ Filtrar nodos con delta menor a 0.25:
 ```./filters tests/easy/test_2.png out.png delta 0.01``` FUNCIONA
 ```./filters tests/easy/test_3.png out.png delta 0.1``` FUNCIONA
 ```./filters tests/easy/test_3.png out.png delta 0.01``` FUNCIONA
-```./filters tests/easy/test_4.png out.png delta 0.01``` NO FUNCIONA
+```./filters tests/easy/test_4.png out.png delta 0.01``` FUNCIONA (habia que cambiar la raiz a 0)
 
 ```./filters tests/medium/mona_lisa.png out.png delta 0.25``` FUNCIONA
 ```./filters tests/medium/moon.png out.png delta 0.01``` FUNCIONA
