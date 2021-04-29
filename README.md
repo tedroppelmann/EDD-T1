@@ -33,6 +33,8 @@ Filtrar nodos con area mayor a 100 pixeles y grisáceo mayor a 50:
 
 
 
+
+
 Filtrar nodos con delta menor a 0.25:
 ```./filters tests/img1 out.png delta 0.25```
 
@@ -50,6 +52,9 @@ Filtrar nodos con delta menor a 0.25:
 ```./filters tests/hard/moon.png out.png delta 0.008``` FUNCIONA
 ```./filters tests/hard/plate.png out.png delta 0.005``` FUNCIONA
 ```./filters tests/hard/campus.png out.png delta 0.01``` FUNCIONA
+```./filters tests/hard/campus.png out.png delta 0.03``` FUNCIONA
+```./filters tests/hard/campus.png out.png delta 0.05``` FUNCIONA
+```./filters tests/hard/moon.png out.png delta 0.008``` FUNCIONA
 
 ```./filters campus.png out.png delta 0.25```
 
