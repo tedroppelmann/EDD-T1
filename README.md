@@ -33,5 +33,7 @@ Filter nodes with area greater than 100 pixels and greyness greater than 50:
 
 ```./filters tests/hard/mona_lisa.png out.png area 100 50```
 
+
 Filter nodes with delta less than 0.25:
+
 ```./filters tests/medium/mona_lisa.png out.png delta 0.25```
