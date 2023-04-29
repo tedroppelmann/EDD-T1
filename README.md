@@ -1,62 +1,35 @@
-# Max Tree 
-Código base para tu tarea 1.
+# Max Tree and filtering
 
-## Requerimientos
-Debes tener instalada la librería `libpng` para poder leer las imágenes cómo matrices.  
-Esta la puedes instalar con el comando:
+## Requirements
+
+You need to have installed the `libpng` library to read the an image as a matrix.
+
 ```sudo apt install libpng-dev```
 
-## Compilar y ejecutar
-Compilar:
+## Compilation and execution
+Compile:
 ```make```
 
-Ejecutar:
-```./filters <input.png> <output.png> <tipo_de_filtro> <A G | D>```
+Execute:
+```./filters <input.png> <output.png> <filter_type> <A G | D>```
 
-## Ejemplos:
-Filtrar nodos con area mayor a 100 pixeles y grisáceo mayor a 50:
-```./filters tests/img1 out.png area 100 50```
+## Types of filters
 
-```./filters tests/easy/test_1.png out.png area 5 60``` FUNCIONA
+Once we have created the Max Tree of an image, we will apply one of the following filters to create a piece of graphic art.
 
-```./filters tests/easy/test_2.png out.png area 12 40``` FUNCIONA
-```./filters tests/easy/test_2.png out.png area 50 5``` FUNCIONA
-```./filters tests/easy/test_3.png out.png area 50 40``` FUNCIONA
-```./filters tests/easy/test_4.png out.png area 18 30``` FUNCIONA
+1. **Area filter:** This filter selects the neighbourhoods associated with tree nodes in an image that meet two conditions:
+   1.  Each pixel in the neighbourhood is larger than a certain greyness value G.
+   2.  The number of pixels in the neighbourhood is greater than a number A.
 
-```./filters tests/medium/mona_lisa.png out.png area 5 30``` FUNCIONA
-```./filters tests/medium/moon.png out.png area 20 50``` FUNCIONA
+   If the neighbourhood meets both conditions, its pixels keep their colours. On the other hand, if a neighbourhood does not meet either condition, the pixels become the shade of grey of their parent at that time. If that pixel is black, its greyscale is kept at zero.
+2. **Delta filter:** This filter selects the neighbourhoods whose difference in the number of pixels with respect to the neighbourhood of their parent is less than a D calculated as of its parent is less than a D calculated as:
+$$ D = {parentPixels - childrenPixels \over parentPixels} $$
+As in the previous filter, the neighbourhoods that do not meet the condition become the tone of the neighbourhood's parent, while those that do meet D keep their greyness. The neighbourhood associated to the root node is not considered, since the root does not have a parent. Also, if there is no variation with the parent node, the filter is not applied.
 
-```./filters tests/hard/moon.png out.png area 500 7``` FUNCIONA
-```./filters tests/hard/plate.png out.png area 100 60``` FUNCIONA
-```./filters tests/hard/campus.png out.png area 200 0``` FUNCIONA
+## Examples
+Filter nodes with area greater than 100 pixels and greyness greater than 50:
 
+```./filters tests/hard/mona_lisa.png out.png area 100 50```
 
-
-
-
-Filtrar nodos con delta menor a 0.25:
-```./filters tests/img1 out.png delta 0.25```
-
-```./filters tests/easy/test_1.png out.png delta 0.5``` FUNCIONA
-```./filters tests/easy/test_2.png out.png delta 0.01``` FUNCIONA
-```./filters tests/easy/test_3.png out.png delta 0.1``` FUNCIONA
-```./filters tests/easy/test_3.png out.png delta 0.01``` FUNCIONA
-```./filters tests/easy/test_4.png out.png delta 0.01``` FUNCIONA (habia que cambiar la raiz a 0)
-
-```./filters tests/medium/mona_lisa.png out.png delta 0.25``` FUNCIONA
-```./filters tests/medium/moon.png out.png delta 0.01``` FUNCIONA
-```./filters tests/medium/moon.png out.png delta 0.05``` FUNCIONA
-
-
-```./filters tests/hard/moon.png out.png delta 0.008``` FUNCIONA
-```./filters tests/hard/plate.png out.png delta 0.005``` FUNCIONA
-```./filters tests/hard/campus.png out.png delta 0.01``` FUNCIONA
-```./filters tests/hard/campus.png out.png delta 0.03``` FUNCIONA
-```./filters tests/hard/campus.png out.png delta 0.05``` FUNCIONA
-```./filters tests/hard/moon.png out.png delta 0.008``` FUNCIONA
-
-```./filters campus.png out.png delta 0.25```
-
-
-
+Filter nodes with delta less than 0.25:
+```./filters tests/medium/mona_lisa.png out.png delta 0.25```
