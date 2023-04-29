@@ -1,5 +1,7 @@
 # Max Tree and filtering
 
+This programme uses the Max Tree data structure to segment a greyscale image, and then uses this tree to generate a new image, to which a particular filter is applied.
+
 ## Requirements
 
 You need to have installed the `libpng` library to read the an image as a matrix.
