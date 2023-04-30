@@ -25,7 +25,9 @@ Once we have created the Max Tree of an image, we will apply one of the followin
 
    If the neighbourhood meets both conditions, its pixels keep their colours. On the other hand, if a neighbourhood does not meet either condition, the pixels become the shade of grey of their parent at that time. If that pixel is black, its greyscale is kept at zero.
 2. **Delta filter:** This filter selects the neighbourhoods whose difference in the number of pixels with respect to the neighbourhood of their parent is less than a D calculated as of its parent is less than a D calculated as:
+
 $$ D = {parentPixels - childrenPixels \over parentPixels} $$
+
 As in the previous filter, the neighbourhoods that do not meet the condition become the tone of the neighbourhood's parent, while those that do meet D keep their greyness. The neighbourhood associated to the root node is not considered, since the root does not have a parent. Also, if there is no variation with the parent node, the filter is not applied.
 
 ## Examples
